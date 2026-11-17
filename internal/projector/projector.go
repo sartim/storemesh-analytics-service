@@ -59,7 +59,25 @@ func Apply(ctx context.Context, db *sql.DB, event Event) error {
 		if err != nil {
 			return fmt.Errorf("update daily sales: %w", err)
 		}
+	} else if event.Topic == "storemesh.inventory.events" && isInventoryProjectionEvent(event.Type) {
+		_, err = tx.ExecContext(ctx, `
+				INSERT INTO inventory_event_counts (event_type, event_count)
+				VALUES ($1, 1)
+				ON CONFLICT (event_type) DO UPDATE SET
+				  event_count = inventory_event_counts.event_count + 1`, event.Type)
+		if err != nil {
+			return fmt.Errorf("update inventory event counts: %w", err)
+		}
 	}
 
 	return tx.Commit()
+}
+
+func isInventoryProjectionEvent(eventType string) bool {
+	switch eventType {
+	case "InventoryAdjusted", "InventoryReserved", "InventoryReleased":
+		return true
+	default:
+		return false
+	}
 }

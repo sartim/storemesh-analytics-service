@@ -9,3 +9,8 @@ CREATE TABLE IF NOT EXISTS daily_sales (
     order_count BIGINT NOT NULL DEFAULT 0,
     gross_minor BIGINT NOT NULL DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS inventory_event_counts (
+    event_type TEXT PRIMARY KEY,
+    event_count BIGINT NOT NULL DEFAULT 0
+);

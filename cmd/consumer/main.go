@@ -31,7 +31,7 @@ func main() {
 		group = "storemesh-analytics"
 	}
 	ctx := context.Background()
-	topics := []string{"storemesh.order.events"}
+	topics := []string{"storemesh.order.events", "storemesh.inventory.events"}
 	var wg sync.WaitGroup
 	for _, topic := range topics {
 		wg.Add(1)

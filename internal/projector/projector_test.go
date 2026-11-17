@@ -15,3 +15,14 @@ func TestOrderCreatedPayloadDecodesProjectionFields(t *testing.T) {
 		t.Fatalf("decoded order = %+v", order)
 	}
 }
+
+func TestInventoryEventTypesAreProjectionEvents(t *testing.T) {
+	for _, eventType := range []string{"InventoryAdjusted", "InventoryReserved", "InventoryReleased"} {
+		if !isInventoryProjectionEvent(eventType) {
+			t.Fatalf("expected %s to be projected", eventType)
+		}
+	}
+	if isInventoryProjectionEvent("UnknownEvent") {
+		t.Fatal("unknown event must not be projected")
+	}
+}

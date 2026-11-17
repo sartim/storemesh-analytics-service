@@ -2,7 +2,9 @@
 
 This service is the first Kafka consumer boundary for StoreMesh. It consumes
 `OrderCreated` events from `storemesh.order.events` and maintains a small
-PostgreSQL `daily_sales` projection for operational analytics.
+PostgreSQL `daily_sales` projection for operational analytics. It also consumes
+Inventory adjustment, reservation, and release events from
+`storemesh.inventory.events` and maintains idempotent `inventory_event_counts`.
 
 The consumer is deliberately opt-in. It requires an externally operated Kafka
 broker and PostgreSQL; the local Argo bootstrap does not install or start it.
