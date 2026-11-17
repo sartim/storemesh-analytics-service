@@ -26,3 +26,14 @@ func TestInventoryEventTypesAreProjectionEvents(t *testing.T) {
 		t.Fatal("unknown event must not be projected")
 	}
 }
+
+func TestOrderProjectionRequiresCanonicalTopic(t *testing.T) {
+	if !isOrderProjectionEvent(orderEventsTopic, "OrderCreated") {
+		t.Fatal("canonical OrderCreated event should be projected")
+	}
+	for _, event := range [][2]string{{"storemesh.inventory.events", "OrderCreated"}, {orderEventsTopic, "OrderUpdated"}} {
+		if isOrderProjectionEvent(event[0], event[1]) {
+			t.Fatalf("unexpected order projection for topic=%q type=%q", event[0], event[1])
+		}
+	}
+}

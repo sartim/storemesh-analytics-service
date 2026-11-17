@@ -20,6 +20,8 @@ type orderCreated struct {
 	CreatedAt  string `json:"createdAt"`
 }
 
+const orderEventsTopic = "storemesh.order.events"
+
 // Apply records the event ID before updating the projection in the same
 // transaction. A duplicate Kafka delivery therefore has no effect.
 func Apply(ctx context.Context, db *sql.DB, event Event) error {
@@ -40,7 +42,7 @@ func Apply(ctx context.Context, db *sql.DB, event Event) error {
 		return err
 	}
 
-	if event.Type == "OrderCreated" {
+	if isOrderProjectionEvent(event.Topic, event.Type) {
 		var order orderCreated
 		if err := json.Unmarshal(event.Payload, &order); err != nil {
 			return fmt.Errorf("decode OrderCreated: %w", err)
@@ -71,6 +73,10 @@ func Apply(ctx context.Context, db *sql.DB, event Event) error {
 	}
 
 	return tx.Commit()
+}
+
+func isOrderProjectionEvent(topic, eventType string) bool {
+	return topic == orderEventsTopic && eventType == "OrderCreated"
 }
 
 func isInventoryProjectionEvent(eventType string) bool {
