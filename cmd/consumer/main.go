@@ -10,8 +10,8 @@ import (
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/sartim/storemesh-analytics-service/internal/projector"
 	"github.com/segmentio/kafka-go"
-	"storemesh-analytics-service/internal/projector"
 )
 
 func main() {
